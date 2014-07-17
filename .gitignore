@@ -22,3 +22,8 @@
 *.exe
 *.out
 *.app
+
+*.opensdf
+*.sdf
+*.suo
+*.user
