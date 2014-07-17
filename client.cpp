@@ -1,7 +1,7 @@
+#include <vector>
 #include <stdio.h>
+#include <ctype.h>
 #include <winsock2.h>
-
-#include "commands.cpp"
 
 #pragma comment(lib, "ws2_32.lib")
 
@@ -31,17 +31,51 @@ void Client::listen()
 	while(true) {
 		fgets(buf, sizeof(buf) - 1, stdin);
 		char line[1024] = "D", *pch, msg[1024] = "";
+		int operation = 0;
+		if (strlen(buf) == 1)
+		{
+			printf("Error: You sent an empty string. Try again.\n");
+			continue;
+		}
 		pch = strtok(buf, " ");
+		for (unsigned int i = 0; i < strlen(pch); i++)
+			pch[i] = toupper(pch[i]);
+		std::vector<char*> COMMANDS;
+		COMMANDS.push_back("ADD");
+		COMMANDS.push_back("REMOVE");
+		COMMANDS.push_back("DISPLAY");
+		bool funcSupported = false;
+		for (std::vector<char*>::iterator it = COMMANDS.begin(); it != COMMANDS.end(); it++)
+		{
+			if (strcmp(pch, *it) == 0)
+			{
+				funcSupported = true;
+				break;
+			}
+		}
+		if (!funcSupported)
+		{
+			printf("Error: This function is not supported.\n");
+			continue;
+		}
 		strcat(line, pch);
 		pch = strtok(NULL, " ");
-		while(pch != NULL)
+		while(true)
 		{
+			if (pch != NULL) strcat(msg, " ");
+			else break;
 			strcat(msg, pch);
-			strcat(msg, " ");
 			pch = strtok(NULL, " ");
 		}
+		if (strlen(msg) == 0)
+		{
+			printf("Error: You have not sent a message.\n");
+			continue;
+		}
 		//strcat(line, len);
-		printf("%s", msg);
+		strcat(line, "1024");
+		strcat(line, msg);
+		printf("%s", line);
 		//send(sock, buf, strlen(buf), 0);
 	}
 }
