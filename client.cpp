@@ -1,18 +1,4 @@
-#include <vector>
-#include <stdio.h>
-#include <ctype.h>
-#include <winsock2.h>
-
-#pragma comment(lib, "ws2_32.lib")
-
-class Client {
-private:
-	SOCKET sock;
-public:
-	char buf[1024];
-	void conn();
-	void listen();
-};
+#include "header.h"
 
 void Client::conn()
 {
@@ -28,9 +14,12 @@ void Client::conn()
 
 void Client::listen()
 {
-	while(true) {
-		fgets(buf, sizeof(buf) - 1, stdin);
-		char line[1024] = "D", *pch, msg[1024] = "";
+	while (true) {
+		fgets(buf, sizeof(buf)-1, stdin);
+		std::vector<char*> request(4);
+		char *protoId = "845128";
+		request[0] = protoId;
+		char *pch, msg[1024] = "";
 		int operation = 0;
 		if (strlen(buf) == 1)
 		{
@@ -58,30 +47,26 @@ void Client::listen()
 			printf("Error: This function is not supported.\n");
 			continue;
 		}
-		strcat(line, pch);
+		request[1] = pch;
 		pch = strtok(NULL, " ");
-		while(true)
+		while (true)
 		{
 			if (pch != NULL) strcat(msg, " ");
 			else break;
 			strcat(msg, pch);
 			pch = strtok(NULL, " ");
 		}
+		trim(msg);
 		if (strlen(msg) == 0)
 		{
 			printf("Error: You have not sent a message.\n");
 			continue;
 		}
-		//strcat(line, len);
-		strcat(line, "1024");
-		strcat(line, msg);
-		printf("%s", line);
-		//send(sock, buf, strlen(buf), 0);
+		request[2] = new char[16];
+		itoa(strlen(msg), request[2], 10);
+		request[3] = msg;
+		printf("%s - %s - %s - %s", request[0], request[1], request[2], request[3]);
+		//can we send so?
+		//send(sock, request.data(), request.size(), 0);
 	}
-}
-
-void main()
-{
-	Client* client = new Client();
-	client->listen();
 }
