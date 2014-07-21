@@ -5,13 +5,21 @@
 
 #pragma comment(lib, "ws2_32.lib")
 
+#define SERVER_IP "192.168.1.6"
+#define SERVER_PORT 110714
+
+#define PROTOCOL_ID "845128"
+
 void trim(char*);
 
 class Client {
 private:
 	SOCKET sock;
-public:
 	char buf[1024];
-	void conn();
+	void connection();
+	void close();
 	void listen();
+	bool isOperationSupported(char*);
+public:
+	Client();
 };

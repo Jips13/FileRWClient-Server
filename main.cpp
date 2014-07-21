@@ -2,6 +2,5 @@
 
 void main()
 {
-	Client* client = new Client();
-	client->listen();
+	new Client();
 }
