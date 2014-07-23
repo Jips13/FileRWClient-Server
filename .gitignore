@@ -1,5 +1,6 @@
 # Debug
-/Debug/
+*/Debug/
+*/ipch/
 
 # Compiled Object files
 *.slo
@@ -27,3 +28,6 @@
 *.sdf
 *.suo
 *.user
+*.vcxproj
+*.filters
+*.sln

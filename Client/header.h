@@ -5,10 +5,10 @@
 
 #pragma comment(lib, "ws2_32.lib")
 
-#define SERVER_IP "192.168.1.6"
-#define SERVER_PORT 110714
+#define SERVER_IP "192.168.2.2"
+#define SERVER_PORT 65000
 
-#define PROTOCOL_ID "845128"
+#define PROTOCOL_ID 3
 
 void trim(char*);
 
@@ -19,7 +19,7 @@ private:
 	void connection();
 	void close();
 	void listen();
-	bool isOperationSupported(char*);
+	int getOperationId(char*);
 public:
 	Client();
 };

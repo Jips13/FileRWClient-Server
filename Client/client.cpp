@@ -1,8 +1,10 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include "header.h"
 
 Client::Client()
 {
-	//connection();
+	connection();
 	listen();
 }
 
@@ -35,10 +37,9 @@ void Client::listen()
 			close();
 			break;
 		}
-		std::vector<char*> request(4);
-		request[0] = PROTOCOL_ID;
-		char *pch, msg[1024] = "";
-		int operation = 0;
+		char sendBuf[1028];
+		sendBuf[0] = PROTOCOL_ID;
+		char *pch, msg[127] = "";
 		if (strlen(buf) == 1)
 		{
 			printf("Error: You sent an empty string. Try again.\n");
@@ -47,12 +48,13 @@ void Client::listen()
 		pch = strtok(buf, " ");
 		for (unsigned int i = 0; i < strlen(pch); i++)
 			pch[i] = toupper(pch[i]);
-		if (!isOperationSupported(pch))
+		int operation = getOperationId(pch);
+		if (operation == 0)
 		{
 			printf("Error: This function is not supported.\n");
 			continue;
 		}
-		request[1] = pch;
+		sendBuf[1] = (char)operation;
 		pch = strtok(NULL, " ");
 		while (true)
 		{
@@ -67,24 +69,29 @@ void Client::listen()
 			printf("Error: You have not sent a message.\n");
 			continue;
 		}
-		request[2] = new char[16];
-		itoa(strlen(msg), request[2], 10);
-		request[3] = msg;
-		printf("To Server: %s - %s - %s - %s\n", request[0], request[1], request[2], request[3]);
-		send(sock, (char*)request.data(), request.size(), 0);
+		sendBuf[2] = (char)strlen(msg);
+		for(unsigned int i = 0; i < strlen(msg); i++)
+		{
+			sendBuf[3 + i] = msg[i];
+		}
+		sendBuf[3 + strlen(msg)] = '\0';
+		printf("To Server: %s\n", sendBuf);
+		send(sock, sendBuf, strlen(sendBuf), 0);
 	}
 }
 
-bool Client::isOperationSupported(char *operation)
+int Client::getOperationId(char *operation)
 {
 	std::vector<char*> COMMANDS;
 	COMMANDS.push_back("ADD");
 	COMMANDS.push_back("REMOVE");
 	COMMANDS.push_back("DISPLAY");
+	int i = 0;
 	for (std::vector<char*>::iterator it = COMMANDS.begin(); it != COMMANDS.end(); it++)
 	{
+		i++;
 		if (strcmp(operation, *it) == 0)
-			return true;
+			return i;
 	}
-	return false;
+	return 0;
 }
