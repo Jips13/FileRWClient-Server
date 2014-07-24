@@ -52,15 +52,6 @@ void Server::Connect(void)
 	buf[9] = 'v';
 	buf[10] = 'o';
 	parse(&file,buf);
-	//WSAStartup(0x202, (LPWSADATA)&buf[0]);
-	//sock = socket(PF_INET, SOCK_STREAM, 0);
-	//sockaddr_in adr;
-	//SOCKADDR_IN sin;
-	//sin.sin_family = PF_INET;
-	//sin.sin_port = htons(110714);
-	//sin.sin_addr.s_addr = inet_addr("192.168.2.1");
-	//bind(sock,(sockaddr*)&adr, sizeof(adr));
-	//connect(sock,(sockaddr*)&adr, sizeof(adr));
 	
 }
 
